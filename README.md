@@ -39,3 +39,4 @@ real values can get: T = ((float)(struct_tph.temp1)) / 100.
 
 Functions don't use of delay, it should do it manually for benefits of using FreeRTOS.
 Or usuing CPU resources for checkking results. Max measuring time takes about 200 mS, but You can check it.
+
