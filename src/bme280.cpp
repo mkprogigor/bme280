@@ -86,10 +86,8 @@ struct_tph bme280::f_read_TPH() {
 	int32_t  adc_T = (_lv_regs[3] << 16) | (_lv_regs[4] << 8) | _lv_regs[5];
 	uint32_t adc_P = (_lv_regs[0] << 16) | (_lv_regs[1] << 8) | _lv_regs[2];
 	int32_t  adc_H = (_lv_regs[6] << 8)  | _lv_regs[7];
-//	Serial.println(_tv_raw_temp1);	Serial.println(_tv_raw_pres1); Serial.println(_tv_raw_humi1);
 
-    // Returns temperature in DegC, resolution is 0.01 DegC.
-    // Output value of “5123” equals 51.23 DegC.
+    // Returns temperature in DegC, resolution is 0.01 DegC. Output value of “5123” equals 51.23 DegC.
     // t_fine carries fine temperature as global value
 	BME280_S32_t lv_var1, lv_var2, t_fine;
 	if (adc_T == 0x800000) {
@@ -104,8 +102,7 @@ struct_tph bme280::f_read_TPH() {
 		lv_tph.temp1  = (t_fine * 5 + 128) >> 8;
 	}
   
-    // Returns pressure in Pa as unsigned 32 bit integer in Q24.8 format
-    // (24 integer bits and 8 fractional bits).
+    // Returns pressure in Pa as unsigned 32 bit integer in Q24.8 format (24 integer bits and 8 fractional bits).
     // Output value of “24674867” represents 24674867/256 = 96386.2 Pa = 963.862 hPa
 	BME280_S64_t var1, var2, p;
 	if (adc_P == 0x800000) {
@@ -149,7 +146,7 @@ struct_tph bme280::f_read_TPH() {
 		v_x1_u32r = (v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r);
 		lv_tph.humi1 = (BME280_U32_t)(((v_x1_u32r >> 12)*1000)/1024);
 	}
-    return lv_tph;	
+    return lv_tph;
 }
 
 bme280::bme280() {};
