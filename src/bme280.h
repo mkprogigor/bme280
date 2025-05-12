@@ -58,9 +58,9 @@ class bme280 {
         struct_tph f_read_TPH(void);        // read, calculate and return int structure T*100, P*100, H*1000
     
     private:
+        uint8_t _i2c_address = 0x76;	
         uint8_t _f_read_reg(uint8_t address);   // read 1 byte from bme280 register by i2c
         bool _f_write_reg(uint8_t address , uint8_t data);  // write 1 byte to bme280 register
-        uint8_t _i2c_address = 0x76;	
         bool _f_reset(void);                // bme280 software reset 
         void _read_calibr_coeff(void);      // read calibration coeff
         struct {                            // structure of calibration coefficients
