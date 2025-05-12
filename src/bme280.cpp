@@ -39,24 +39,18 @@ uint8_t bme280::f_check_bme(void) {		// check is it conected bme280,
 }
 
 bool bme280::begin() {	// defaults are 16x; Normal mode; 0.5ms, no filter, I2C
-	return begin(0x02, 0x04, 0x07, 0x07, 0x07, 0x07);	//	Forse mode, sleep 500ms, filter x16, t p h x16
+	return begin(0x02, 0x04, 0x07, 0x07, 0x07, 0x07); // Forse mode, sleep 500ms, filter x16, t p h x16
   }
 
 bool bme280::begin(uint8_t mode, uint8_t t_sb, uint8_t filter, uint8_t osrs_t, uint8_t osrs_p, uint8_t osrs_h) {	// init bme280
 //	Wire.begin(); // start I2C interface
-    bme280::_read_calibr_coeff();
-
+	bme280::_read_calibr_coeff();
 	_reg_0xF2 = osrs_h;
 	_reg_0xF4 = (osrs_t<<5) | (osrs_p<<2) | mode;
 	_reg_0xF5 = (t_sb  <<5) | (filter<<2) | 0x00;
-
 	bme280::_f_write_reg(0xF2, _reg_0xF2);   
 	bme280::_f_write_reg(0xF4, _reg_0xF4);   
 	bme280::_f_write_reg(0xF5, _reg_0xF5);
-
-/*	Serial.print("REGISTER 0xF2 = "); Serial.print(bme280::f_read_reg(0xF2),BIN); Serial.print(",	");
-	Serial.print("REGISTER 0xF4 = "); Serial.print(bme280::f_read_reg(0xF4),BIN); Serial.print(",	");
-	Serial.print("REGISTER 0xF5 = "); Serial.print(bme280::f_read_reg(0xF5),BIN); Serial.println(" b");	*/
 	return true;
 };    
 
@@ -68,7 +62,7 @@ void bme280::f_do_1_meas(void) {        // operating mode FORCED_MODE do 1 measu
 	bme280::_f_write_reg( 0xF4, ((_reg_0xF4 & 0xFC) | 0x02) );   
 }
 
-struct_tph bme280::f_read_TPH() {
+struct_tph bme280::f_read_TPH(void) {
     #define BME280_S32_t int32_t
     #define BME280_U32_t uint32_t
     #define BME280_S64_t int64_t
@@ -79,10 +73,9 @@ struct_tph bme280::f_read_TPH() {
 	Wire.beginTransmission(_i2c_address);   // addr of first byte raw data Humi
 	Wire.write(0xF7);
 	if (Wire.endTransmission() != 0) return { 0, 0, 0 };
-	if (Wire.requestFrom(_i2c_address, 8) == 8) {    // reading 26 regs
+	if (Wire.requestFrom(_i2c_address, 8) == 8) {    // reading 8 regs
 		for (uint8_t i = 0; i < 8; i++) _lv_regs[i] = Wire.read();
 	}
-
 	int32_t  adc_T = (_lv_regs[3] << 16) | (_lv_regs[4] << 8) | _lv_regs[5];
 	uint32_t adc_P = (_lv_regs[0] << 16) | (_lv_regs[1] << 8) | _lv_regs[2];
 	int32_t  adc_H = (_lv_regs[6] << 8)  | _lv_regs[7];
@@ -91,7 +84,7 @@ struct_tph bme280::f_read_TPH() {
     // t_fine carries fine temperature as global value
 	BME280_S32_t lv_var1, lv_var2, t_fine;
 	if (adc_T == 0x800000) {
-		lv_tph.temp1 = 0;		// if the temperature module has been disabled return '0'
+		lv_tph.temp1 = 0;	// if the temperature module has been disabled return '0'
 	}
 	else {
 		adc_T >>= 4;
